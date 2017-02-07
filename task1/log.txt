@@ -1,0 +1,12 @@
+commit 7bf216eea1ff8fc84cab485c17c6295fe23349be
+Author: Resspectine <resspectyn@gmail.com>
+Date:   Tue Feb 7 12:31:14 2017 +0300
+
+    add task1
+
+commit 50df9131b6491da3fc19a71019ab6cc3a2da556b
+Author: Resspectine <resspectyn@gmail.com>
+Date:   Tue Feb 7 12:29:37 2017 +0300
+
+    add .gitignire
+
