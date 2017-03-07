@@ -1,82 +1,98 @@
+body {
+    background-color: #d3d3d3;
+}
+
 h1 {
-    font-family: sans-serif;
-    color: black;
-    font-size: 45px;
     padding-top: 20px;
     padding-left: 40px;
     margin-bottom: 0;
+
+    color: #000;
+
+    font-family: sans-serif;
+    font-size: 45px;
 }
 
 .link-black {
-    padding-right: 5px;
-    padding-left: 5px;
-    padding-bottom: 2px;
-    padding-top: 2px;
-    background-color: black;
-    color: white;
+    padding: 2px 5px 2px 5px;
+
     display: inline-block;
-    font-size: 16px;
     line-height: 1.5;
     text-align: center;
-    white-space: nowrap;
-    cursor: pointer;
+
+    background-color: #000;
+    color: #fff;
+
+    font-size: 16px;
+    text-decoration: none;
+
     border-radius: 4px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    text-decoration: none;
+
+    white-space: nowrap;
+    cursor: pointer;
 }
 
 .link-green {
-    padding-right: 5px;
-    padding-left: 5px;
-    padding-bottom: 2px;
-    padding-top: 2px;
-    background-color: limegreen;
-    color: black;
+    padding: 2px 5px 2px 5px;
+
     display: inline-block;
+    background-color: #32cd32;
+
+    color: #000;
     font-size: 16px;
+    text-decoration: none;
     line-height: 1.5;
     text-align: center;
-    white-space: nowrap;
-    cursor: pointer;
+
     border-radius: 4px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    text-decoration: none;
+
+    white-space: nowrap;
+    cursor: pointer;
 }
 
 .header {
-    background-color: darkgray;
+    margin: -30px -8px 20px -8px;
+
+    background-color: #a9a9a9;
     height: 130px;
-    margin-left: -8px;
-    margin-right: -8px;
-    margin-top: -30px;
-    margin-bottom: 20px;
 }
 
-#in-button {
+.in-button {
     margin-right: -4px;
-    background-color: white;
-    color: black;
+
+    background-color: #fff;
+    color: #000;
     font-size: 16px;
     line-height: 1.5;
-    cursor: pointer;
-    border-radius: 4px;
+
     border: 1px;
+    border-radius: 4px;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+
+    cursor: pointer;
 }
 
-#out-button {
-    background-color: limegreen;
-    color: black;
+.select-text {
+    margin-top: -20px;
+}
+
+.out-button {
+    background-color: #32cd32;
+    color: #000;
     font-size: 16px;
     line-height: 1.5;
-    cursor: pointer;
+
     border-radius: 4px;
     border: 1px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+
+    cursor: pointer;
 }
 
 .control-buttons {
@@ -84,30 +100,35 @@ h1 {
     float: right;
 }
 
-#log-button {
+.log-button {
     margin-right: -4px;
-    background-color: white;
-    color: black;
+
+    background-color: #fff;
+    color: #000;
     font-size: 16px;
     line-height: 1.5;
-    cursor: pointer;
+
     border-radius: 4px;
     border: 1px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+
+    cursor: pointer;
 }
 
 .login-button {
-    float: right;
     margin-top: -24px;
     margin-right: 35px;
+
+    float: right;
 }
 
 .my-flex-container {
     margin-left: 25px;
-    display: flex;
     margin-bottom: 0;
+
     height: 24px;
+    display: flex;
 }
 
 .my-flex-block {
@@ -119,42 +140,47 @@ h1 {
     margin-right: 20px;
     margin-top: -22px;
     margin-bottom: 56px;
+
     float: top;
 }
 
 .search {
-    display: flex;
     margin-right: 20px;
     margin-top: -20px;
+
+    display: flex;
     float: right;
 }
 
-#search-bar {
+.search-bar {
     margin-right: 0;
-    border-radius: 8px;
+
     border: 0;
+    border-radius: 8px;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
 
-#search-button {
+.search-button {
     margin-left: 0;
-    background-color: limegreen;
-    color: black;
+
+    background-color: #32cd32;
+    color: #000;
+
     font-weight: bold;
     font-size: 12px;
     line-height: 1.5;
-    cursor: pointer;
+
     border-radius: 2px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     border: 1px;
+
+    cursor: pointer;
 }
 
 .news-feed {
     margin-top: -40px;
-    align-content: center;
-    align-self: center;
 }
 
 .short-text {
@@ -165,9 +191,9 @@ h1 {
 }
 
 .head-short-news {
-    max-width: 550px;
     margin-top: -20px;
     margin-bottom: 0;
+    max-width: 550px;
 }
 
 img {

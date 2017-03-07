@@ -5,17 +5,18 @@
     <title>News</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <script src="script.js"></script>
 </head>
-<body style="background-color: lightgray;">
+<body >
 <div class="header">
     <h1>NEWS</h1>
     <div class="all-buttons">
         <div class="control-buttons">
-            <button id="in-button">Sign in</button>
-            <button id="out-button">Sign up</button>
+            <button class="in-button">Sign in</button>
+            <button class="out-button">Sign up</button>
         </div>
         <div class="login-button">
-            <button id="log-button">Log out</button>
+            <button class="log-button">Log out</button>
         </div>
     </div>
     <div class="my-flex-container">
@@ -26,15 +27,15 @@
         <a href="https://www.vk.com/" class="link-green my-flex-block">World news</a>
         <a href="https://www.vk.com/" class="link-green my-flex-block">Local news</a>
     </div>
-    <p class="search"><input id="search-bar" type="search" name="q" placeholder="Поиск по сайту">
-        <input id="search-button" type="submit" value="Найти"></p>
+    <p class="search"><input class="search-bar" type="search" name="q" placeholder="Поиск по сайту">
+        <input class="search-button" type="submit" value="Найти"></p>
 </div>
 <div class="sort">
     <select class="select-sort">
         <option>дате добавления</option>
         <option>имени автора</option>
     </select>
-    <p style="margin-top: -20px">Сортировать по: </p>
+    <p class="select-text">Сортировать по: </p>
 </div>
 <div class="news-feed">
     <div class="short-news">
