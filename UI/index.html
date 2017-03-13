@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="script.js"></script>
+</head>
+<body>
+<div class="header">
+    <h1>NEWS</h1>
+    <div class="all-buttons">
+        <div class="control-buttons">
+            <button class="in-button">Sign in</button>
+            <button class="out-button">Sign up</button>
+        </div>
+        <div class="login-button">
+            <h2 class="nickname"></h2>
+            <button class="log-button">Log out</button>
+        </div>
+    </div>
+    <div class="my-flex-container">
+        <a class="link-black my-flex-block" onclick="newsService.addNews(null);">Добавить новость</a>
+        <a onclick="newsService.show();" class="link-green my-flex-block">Главная страница</a>
+        <a href="https://www.vk.com/" class="link-green my-flex-block">Категории</a>
+        <a href="https://www.vk.com/" class="link-green my-flex-block">Блог</a>
+        <a href="https://www.vk.com/" class="link-green my-flex-block">World news</a>
+        <a href="https://www.vk.com/" class="link-green my-flex-block">Local news</a>
+    </div>
+    <p class="search"><input class="search-bar" type="search" name="q" placeholder="Поиск по сайту">
+        <input class="search-button" type="submit" value="Найти"></p>
+</div>
+<div class="sort">
+    <select class="select-sort">
+        <option>дате добавления</option>
+        <option>имени автора</option>
+    </select>
+    <p class="select-text">Сортировать по: </p>
+</div>
+<div class="news-feed">
+</div>
+<!--<div class="navigation">
+    <a href="https://www.vk.com/" class="">1</a>
+    <a href="https://www.vk.com/" class="">2</a>
+    <a href="https://www.vk.com/" class="">3</a>
+    <a href="https://www.vk.com/" class="">4</a>
+    <a href="https://www.vk.com/" class="">5</a>
+</div>-->
+<footer>Created by MS<br>resspectyn@gmail.com<br>BSU, Minsk, 2017</footer>
+</body>
+</html>
