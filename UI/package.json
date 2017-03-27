@@ -1,0 +1,16 @@
+{
+  "name": "news",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.15.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Resspectine/UP_2nd.git"
+  },
+  "author": "Maksim Stefanenko",
+  "license": "ISC",
+  "homepage": "https://github.com/Resspectine/UP_2nd"
+}
