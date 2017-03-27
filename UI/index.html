@@ -4,50 +4,139 @@
     <meta charset="UTF-8">
     <title>News</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="hovers.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="script.js"></script>
 </head>
 <body>
 <div class="header">
-    <h1>NEWS</h1>
-    <div class="all-buttons">
-        <div class="control-buttons">
-            <button class="in-button">Sign in</button>
-            <button class="out-button">Sign up</button>
-        </div>
-        <div class="login-button">
-            <h2 class="nickname"></h2>
-            <button class="log-button">Log out</button>
+    <div class="flex-header-content">
+        <h1 class="head-title">NEWS</h1>
+        <div class="all-buttons">
+            <div class="login-buttons">
+                <button class="sign-in">Sign in</button>
+                <button class="sign-up">Sign up</button>
+            </div>
+            <div class="logout-button">
+                <div class="nickname"></div>
+                <button class="log-out">Log out</button>
+            </div>
         </div>
     </div>
-    <div class="my-flex-container">
-        <a class="link-black my-flex-block" onclick="newsService.addNews(null);">Добавить новость</a>
-        <a onclick="newsService.show();" class="link-green my-flex-block">Главная страница</a>
-        <a href="https://www.vk.com/" class="link-green my-flex-block">Категории</a>
-        <a href="https://www.vk.com/" class="link-green my-flex-block">Блог</a>
-        <a href="https://www.vk.com/" class="link-green my-flex-block">World news</a>
-        <a href="https://www.vk.com/" class="link-green my-flex-block">Local news</a>
+    <div class="flex-tools">
+        <div class="navigation-bar">
+            <a id="add-news" class="link-white my-flex-block">Добавить новость</a>|
+            <a id="main-page" class="link-black my-flex-block">Главная страница</a>|
+            <a id="categories" class="link-black my-flex-block">Категории</a>|
+            <a id="blog" class="link-black my-flex-block">Блог</a>|
+            <a id="world-news" class="link-black my-flex-block">World news</a>|
+            <a id="local-news" class="link-black my-flex-block">Local news</a>
+        </div>
+        <div class="sort">
+            Сортировка
+            <button class="sort-triggering"><i class="fa fa-arrow-down"></i>
+            </button>
+            <button class="sort-delete">&#10006;
+            </button>
+        </div>
+        <div class="search">
+            <input class="search-bar" type="search" name="q" placeholder="Поиск по сайту">
+            <input class="search-button" type="submit" value="Найти">
+        </div>
     </div>
-    <p class="search"><input class="search-bar" type="search" name="q" placeholder="Поиск по сайту">
-        <input class="search-button" type="submit" value="Найти"></p>
 </div>
-<div class="sort">
-    <select class="select-sort">
-        <option>дате добавления</option>
-        <option>имени автора</option>
-    </select>
-    <p class="select-text">Сортировать по: </p>
+<div class="sort-tools">
+    <div class="names">
+        Сортировать по автору:
+        <select title="authors" class="authors">
+        </select>
+    </div>
+    <div class="dates">
+        Сортировать по дате: от
+        <input type="date" title="date" class="start-date"> до
+        <input type="date" title="date" class="finish-date">
+        <button class="sort-button">Search</button>
+    </div>
+
 </div>
-<div class="news-feed">
+<div class="overlay"></div>
+<div class="body">
+    <div class="news-feed">
+
+    </div>
+    <button class="load-more">
+        Load more
+    </button>
 </div>
-<!--<div class="navigation">
-    <a href="https://www.vk.com/" class="">1</a>
-    <a href="https://www.vk.com/" class="">2</a>
-    <a href="https://www.vk.com/" class="">3</a>
-    <a href="https://www.vk.com/" class="">4</a>
-    <a href="https://www.vk.com/" class="">5</a>
-</div>-->
-<footer>Created by MS<br>resspectyn@gmail.com<br>BSU, Minsk, 2017</footer>
+<footer style="margin-left: 10vw">Created by MS<br>resspectyn@gmail.com<br>BSU, Minsk, 2017</footer>
 </body>
+<template id="logined-user-news">
+    <div class="short-news">
+        <h2 class="head-short-news"></h2>
+        <p class="short-text"></p>
+        <div class="flex-interface">
+            <a href="#" id="edit">
+                <i class="fa fa-pencil-square-o fa-2x"></i></a>
+            <a href="#" id="delete">
+                <i class="fa fa-trash-o fa-2x" aria-hidden="true"></i></a>
+        </div>
+        <footer></footer>
+    </div>
+</template>
+<template id="unlogined-user-news">
+    <div class="short-news">
+        <h2 class="head-short-news"></h2>
+        <p class="short-text"></p>
+        <footer></footer>
+    </div>
+</template>
+<template id="login-window">
+    <div class="login-window">
+        <button class="close-window">&#10006;</button>
+        <div class="flex-login-inputs">
+            <input type="text" placeholder="Login" class="login" title="Title">
+            <input type="text" placeholder="Password" class="password" title="Summary">
+        </div>
+        <button class="login-button">Log in</button>
+    </div>
+</template>
+<template id="creating-news">
+    <div class="create-news">
+        <button class="close-window">&#10006;</button>
+        <div class="flex-all-creations">
+            <div class="flex-creation">
+                <input type="file" class="create-news-image" align="left">
+                <div class="flex-inputs">
+                    <input type="text" placeholder="Title" class="create-news-title" title="Title">
+                    <input type="text" placeholder="Summary" class="create-news-summary" title="Summary">
+                </div>
+            </div>
+            <textarea placeholder="Content" class="create-news-content" title="Content"></textarea>
+        </div>
+        <button class="send-news" id="">
+            <i class="fa fa-plus"></i>Send
+        </button>
+    </div>
+</template>
+<template id="show-news">
+    <div class="show-news">
+        <button class="close-window">&#10006;</button>
+        <h1 class="show-title" title="Title"></h1>
+        <h2 class="show-summary" title="Summary"></h2>
+        <p class="show-content" title="Content"></p>
+        <footer></footer>
+    </div>
+</template>
+<template id="edit-news">
+    <div class="edit-news">
+        <button class="close-window">&#10006;</button>
+        <input type="text" placeholder="Title" class="text-title" title="Title" value="' + article.Title + '">
+        <input type="text" placeholder="Summary" class="text-summary" title="Summary" value="' + article.Summary + '">
+        <textarea placeholder="Content" class="text-content" title="Content"></textarea>
+        <button class="send-news">
+            <i class="fa fa-paper-plane"></i>Send
+        </button>
+    </div>
+</template>
+<script src="script.js"></script>
 </html>

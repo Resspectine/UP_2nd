@@ -1,6 +1,6 @@
-var user = "Василий Иванов";
+var user = "";
 var articlesService = (function () {
-    var Articles = [{
+    var articles = [{
         Id: "1",
         Title: "Что изменится с 1 марта: подорожают сигареты и звонки со стационарных телефонов",
         Summary: "С 1 марта в Беларуси вырастут цены на некоторые марки сигарет, а также подорожают звонки" +
@@ -69,7 +69,7 @@ var articlesService = (function () {
         Content: "В итоге комиссия утвердила прежний план застройки зоны, куда входит и площадка бизнес-центра" +
         " на улице Мирошниченко. Лишь один человек выступил против, еще один — воздержался."
     }, {
-        Id: "7",
+        Id: '7',
         Title: "Шуневич рассказал, в каких городах появятся центры временного содержания незаконных мигрантов",
         Summary: "В Беларуси центры временного содержания незаконных мигрантов будут созданы в Витебске, Гомеле" +
         " и Лиде. Об этом в интервью БЕЛТА рассказал министр внутренних дел Игорь Шуневич. По его " +
@@ -233,35 +233,115 @@ var articlesService = (function () {
         "издания в дипломатических кругах, Сеул впервые обратился к Москве с просьбой в срочном порядке " +
         "выяснить местонахождение и задержать подозреваемых для проверки их личностей."
     }];
+    var Articles = JSON.parse(localStorage.getItem('data'));
+    var deletedArticles = JSON.parse(localStorage.getItem('delete'));
+    if (Articles) {
+        Articles.forEach(function (item) {
+            item.CreatedAt = new Date(item.CreatedAt);
+        });
+    }
+    if (deletedArticles) {
+        deletedArticles.forEach(function (item) {
+            item.CreatedAt = new Date(item.CreatedAt);
+        });
+    } else{
+        deletedArticles = [];
+    }
+    window.addEventListener('beforeunload', function () {
+        if (!Articles) {
+            localStorage.setItem('data', JSON.stringify(articles));
+            localStorage.setItem('delete', JSON.stringify(deletedArticles));
+        } else {
+            localStorage.setItem('data', JSON.stringify(Articles));
+            localStorage.setItem('delete', JSON.stringify(deletedArticles));
+        }
+    });
+
+    function setLength() {
+        if (Articles) {
+            length = Articles.length;
+        }
+        else {
+            length = articles.length;
+        }
+    }
+
+    var validatedArticle =
+        {
+            Id: function (id) {
+                if (id) {
+                    return typeof id === 'string';
+                }
+                return false;
+            },
+            Title: function (title) {
+                if (title) {
+                    return title.length < 100;
+                }
+                return false;
+            },
+            Summary: function (summary) {
+                if (summary) {
+                    return summary.length < 200;
+                }
+                return false;
+            },
+            CreatedAt: function (createdAt) {
+                return createdAt;
+            },
+            Author: function (author) {
+                return author;
+            },
+            Content: function (content) {
+                return content;
+            }
+        };
 
     function getArticles(skip, top, fileConfig) {
         skip = skip || 0;
         top = top || 10;
         var sortedArticles = [];
-        if (fileConfig != null) {
-            if (fileConfig.Author == null && fileConfig.CreatedAt == null) {
-                for (var i = skip, j = 0; i < top; i++, j++) {
-                    sortedArticles[j] = Articles[i];
-                }
+        if (fileConfig) {
+            if (!fileConfig.Author && !fileConfig.CreatedAtStart && !fileConfig.CreatedAtFinish) {
+                sortedArticles = Articles.slice(skip, top);
             }
-            else if (fileConfig.Author == null) {
-                for (i = skip, j = 0; i < top; i++, j++)
-                    if (fileConfig.CreatedAt === Articles[i].CreatedAt) {
-                        sortedArticles[j] = Articles[i];
-                    }
+            else if (fileConfig.CreatedAtStart && !fileConfig.CreatedAtFinish && !fileConfig.Author) {
+                sortedArticles = Articles.filter(function (number) {
+                    return new Date(fileConfig.CreatedAtStart) <= number.CreatedAt;
+                });
             }
-            else {
-                for (i = skip, j = 0; i < top; i++, j++) {
-                    if (fileConfig.Author === Articles[i].Author) {
-                        sortedArticles[j] = Articles[i];
-                    }
-                }
+            else if (!fileConfig.CreatedAtStart && fileConfig.CreatedAtFinish && !fileConfig.Author) {
+                sortedArticles = Articles.filter(function (number) {
+                    return new Date(fileConfig.CreatedAtFinish) >= number.CreatedAt;
+                });
+            } else if (fileConfig.CreatedAtStart && fileConfig.CreatedAtFinish && !fileConfig.Author) {
+                sortedArticles = Articles.filter(function (number) {
+                    return new Date(fileConfig.CreatedAtFinish) >= number.CreatedAt &&
+                        new Date(fileConfig.CreatedAtStart) <= number.CreatedAt;
+                });
+            } else if (fileConfig.CreatedAtStart && fileConfig.CreatedAtFinish && fileConfig.Author) {
+                sortedArticles = Articles.filter(function (number) {
+                    return new Date(fileConfig.CreatedAtFinish) >= number.CreatedAt &&
+                        new Date(fileConfig.CreatedAtStart) <= number.CreatedAt && fileConfig.Author === number.Author;
+                });
+            } else if (!fileConfig.CreatedAtStart && fileConfig.CreatedAtFinish && fileConfig.Author) {
+                sortedArticles = Articles.filter(function (number) {
+                    return new Date(fileConfig.CreatedAtFinish) >= number.CreatedAt &&
+                        fileConfig.Author === number.Author;
+                });
+            } else if (fileConfig.CreatedAtStart && !fileConfig.CreatedAtFinish && fileConfig.Author) {
+                sortedArticles = Articles.filter(function (number) {
+                    return new Date(fileConfig.CreatedAtStart) <= number.CreatedAt && number.Author;
+                });
+            } else {
+                sortedArticles = Articles.filter(function (number) {
+                    return fileConfig.Author === number.Author;
+                });
             }
         }
-        else
-            for (i = skip, j = 0; i < top; i++, j++) {
-                sortedArticles[j] = Articles[i];
-            }
+        else {
+            sortedArticles = Articles.slice(skip, top);
+        }
         sortedArticles.sort(function (a, b) {
             return a.CreatedAt - b.CreatedAt;
         });
@@ -269,57 +349,74 @@ var articlesService = (function () {
     }
 
     function getArticle(id) {
-        var rez;
+        var result = false;
         Articles.forEach(function (item) {
-            if (id == item.Id) {
-                rez = item;
+            if (id === item.Id) {
+                result = item;
             }
         });
-        return rez || false;
+        return result || false;
     }
 
     function validateArticle(article) {
-        if (article.id === "")
-            return false;
-        if (article.Title === "")
-            return false;
-        if (article.Summary === "")
-            return false;
-        if (article.CreatedAt == null)
-            return false;
-        if (article.Author === "")
-            return false;
-        if (article.Content === "")
-            return false;
-        return true;
+        if (article) {
+            return Object.keys(validatedArticle).every(function (item) {
+                    return validatedArticle[item](article[item]);
+                }
+            );
+        }
     }
 
-    function addArticle(arr) {
-        if (validateArticle(arr)) {
-            Articles.push(arr);
+    function addArticle(article) {
+        if (validateArticle(article)) {
+            Articles.push(article);
+            setLength();
             return true;
         }
-        else
+        else {
             return false;
+        }
     }
 
-    function editArticle(id, arr) {
-        var changeArticle = getArticle(id);
-        if (arr.Title != "") {
-            changeArticle.Title = arr.Title;
+    function editArticle(id, article) {
+        var mainArticle = getArticle(id);
+        console.log(mainArticle);
+        var bufferArticle = {
+            Id: mainArticle.Id,
+            Title: article.Title,
+            Summary: article.Summary,
+            CreatedAt: mainArticle.CreatedAt,
+            Author: mainArticle.Author,
+            Content: article.Content
+        };
+        if (validateArticle(bufferArticle)) {
+            getArticle(id).Title = article.Title;
+            getArticle(id).Summary = article.Summary;
+            getArticle(id).Content = article.Content;
+            return true;
         }
-        if (arr.Summary != "") {
-            changeArticle.Summary = arr.Summary;
+        else {
+            console.log("false");
+            return false;
         }
-        if (arr.Content != "") {
-            changeArticle.Content = arr.Content;
-        }
-        return validateArticle(changeArticle);
     }
 
     function removeArticle(id) {
+        deletedArticles.push(getArticle(id));
         Articles.splice(Articles.indexOf(getArticle(id)), Articles.indexOf(getArticle(id)));
+        setLength();
     }
+
+    function uniqueAuthors() {
+        var authors = {};
+        Articles.forEach(function (item) {
+            var str = item.Author;
+            authors[str] = true;
+        });
+        return authors;
+    }
+
+    setLength();
 
     return {
         getArticles: getArticles,
@@ -327,120 +424,370 @@ var articlesService = (function () {
         validateArticle: validateArticle,
         addArticle: addArticle,
         editArticle: editArticle,
-        removeArticle: removeArticle
+        removeArticle: removeArticle,
+        length: length,
+        deletedArticles: deletedArticles,
+        uniqueAuthors: uniqueAuthors
     }
 }());
-/* <div class="short-news">
- <img src="https://img.tyt.by/620x620s/n/0d/1/bobruysk_protest_2602_11.jpg" hspace="10px" align="left">
- <a class="delete" href="IMG_126533.jpg">delete</a>
- <h2 class="head-short-news">В регионах прошли новые акции против декрета о тунеядцах</h2>
- <p class="short-text">Напомним, вечером 17 февраля в центре Минска в несанкционированном «Марше рассерженных
- белорусов» приняли участие более двух тысяч человек, которые требовали от властей отменить декрет о
- тунеядстве, а также другие меры, которые бьют по кошелькам людей. Акция завершилась без серьезных
- инцидент</p>
- <a class="readMore" href="https://news.tut.by/society/533102.html">read more</a>
- <footer>25.05.2017 by Author1</footer>
- <hr>
- </div>*/
-var newsService = (function () {
-    var count = 1;
+var newsService = ((function () {
+    var amountOfNews = 0;
 
-    function addNews(id) {
-        id = id || count;
+    function createNewsForNewsFeed(id) {
         var article = articlesService.getArticle(id);
-        var date = new Date(article.CreatedAt);
-        var template = document.createElement('div');
-        template.className = 'short-news';
-        template.id = id;
-        if (user != null) {
-            template.innerHTML = '<img src="https://img.tyt.by/620x620s/n/0d/1/bobruysk_protest_2602_11.jpg" hspace="10px" align="left">' +
-                '<a class="delete" href="#" onclick="newsService.deleteNews(' + article.Id + ');">delete</a>' +
-                '<a class="change" href="#" onclick="newsService.changeNews(' + article.Id + ');">change</a>' +
-                '<h2 class="head-short-news">' + article.Title + '</h2>' +
-                '<p class="short-text">' + article.Summary + '</p>' +
-                '<a class="readMore" href="https://news.tut.by/society/533102.html">read more</a>' +
-                '<footer>' + date.getDate() + '.' + date.getMonth() + '.' +
-                date.getFullYear() + ' by ' + article.Author + '</footer>' +
-                '<hr>';
+        var news;
+        if (user) {
+            news = document.querySelector('#logined-user-news').content.querySelector('.short-news').cloneNode(true);
+        } else {
+            news = document.querySelector('#unlogined-user-news').content.querySelector('.short-news').cloneNode(true);
+        }
+        news.id = id;
+        news.getElementsByTagName('h2')[0].innerHTML = article.Title;
+        news.getElementsByTagName('p')[0].innerHTML = article.Summary;
+        news.getElementsByTagName('footer')[0].innerHTML = article.CreatedAt.getDate() + '.' + article.CreatedAt.getMonth() + '.' +
+            article.CreatedAt.getFullYear() + ' by ' + article.Author;
+        news.addEventListener('click', handleClickOnNews);
+        return news;
+    }
+
+    function addNewsInNewsFeed(id, direction) {
+        var news = createNewsForNewsFeed(id);
+        direction.appendChild(news);
+        return news;
+    }
+
+    function handleClickOnNews(event) {
+        var parent = event.target.parentNode;
+        if (parent.id === 'edit') {
+            editNews(event.currentTarget.id);
+        } else {
+            if (parent.id === 'delete') {
+                deleteNewsFromNewsFeed(event.currentTarget.id);
+            } else {
+                if (event.currentTarget.className === 'short-news') {
+                    openNews(event.currentTarget.id);
+                }
+            }
+        }
+    }
+
+    function handleClickToClose(event) {
+        var button = event.target;
+        if (button.className === 'close-window') {
+            closeWindow(event.currentTarget);
+        }
+        if (button.className === 'login-button') {
+            closeWindow(event.currentTarget);
+        }
+    }
+
+    function handleClickOnEditing(event) {
+        var button = event.target;
+        if (button.id === 'send-news') {
+            completeEditing(event.target.classList, event.currentTarget);
+        }
+    }
+
+    function handleClickOnCreating(event) {
+        var button = event.target;
+        if (button.className === 'send-news') {
+            createNews(event.currentTarget);
+        }
+    }
+
+    function handleClickOnNavigationBar(event) {
+        var key = event.target.id;
+        switch (key) {
+            case 'add-news':
+                if (user) {
+                    createWindowNews();
+                }
+                break;
+        }
+    }
+
+    function handleClickOnLogining(event) {
+        if (event.target.className === 'login-button') {
+            getUser(event.currentTarget);
+        }
+    }
+
+    function handleClickOnControlButtons(event) {
+        switch (event.target.className) {
+            case 'sign-in':
+                loginWindow();
+                break;
+            case 'sign-up':
+                console.log('sign-up');
+                break;
+            case 'log-out':
+                user = "";
+                checkingUser();
+                break;
+            case 'load-more':
+                loadMoreNews();
+                break;
+        }
+    }
+
+    function handleClickOnSort(event) {
+        var button = event.currentTarget.childNodes[0];
+        var temp = document.getElementsByClassName('sort-tools')[0];
+        if (button.className === 'fa fa-arrow-down') {
+            temp.style.top = document.getElementsByClassName('header')[0].offsetHeight + 'px';
+            button.className = 'fa fa-arrow-up';
         }
         else {
-            template.innerHTML = '<img src="https://img.tyt.by/620x620s/n/0d/1/bobruysk_protest_2602_11.jpg" hspace="10px" align="left">' +
-                '<h2 class="head-short-news">' + article.Title + '</h2>' +
-                '<p class="short-text">' + article.Summary + '</p>' +
-                '<a class="readMore" href="https://news.tut.by/society/533102.html">read more</a>' +
-                '<footer>' + date.getDate() + '.' + date.getMonth() + '.' +
-                date.getFullYear() + ' by ' + article.Author + '</footer>' +
-                '<hr>';
+            temp.style.top = '0';
+            button.className = 'fa fa-arrow-down';
         }
-        document.getElementsByClassName('news-feed')[0].appendChild(template);
-        if (id === count)
-            count++;
-        return template;
     }
 
-    function show() {
-        var articles = articlesService.getArticles(1);
-        articles.forEach(function (item) {
-            addNews(item.Id);
+    function handleClickOnSortButton(event) {
+        var body = event.currentTarget.parentNode.parentNode;
+        var name = body.getElementsByClassName('authors')[0].value;
+        var startDate = body.getElementsByClassName('start-date')[0].value;
+        var finishDate = body.getElementsByClassName('finish-date')[0].value;
+        var articles = articlesService.getArticles(0, articlesService.length, {
+            Author: name,
+            CreatedAtStart: startDate,
+            CreatedAtFinish: finishDate
         });
+        var feed = document.getElementsByClassName('news-feed')[0];
+        feed.innerHTML = '';
+        articles.forEach(function (item) {
+            addNewsInNewsFeed(item.Id, feed);
+        });
+        document.getElementsByClassName('sort-delete')[0].style.display = 'flex';
+        document.getElementsByClassName('load-more')[0].style.display = 'none';
+        document.getElementsByClassName('sort-tools')[0].style.top = '0';
+        document.getElementsByClassName('fa fa-arrow-up')[0].className = 'fa fa-arrow-down';
     }
 
-    function deleteNews(id) {
-        var temp = document.getElementById(id);
-        document.getElementsByClassName('news-feed')[0].removeChild(temp);
+    function handleClickOnDeleteSort(event) {
+        show();
+        event.target.style.display = 'none';
     }
 
-    function changeNews(id) {
-        var template = document.createElement('div');
-        template.className = 'change-news';
-        template.id = 'changing';
-        template.innerHTML =
-            '<button class="close-window" onclick="newsService.closeChanging();">&#10006;</button>' +
-            '<textarea placeholder="Title" class="text-title" title="Title"></textarea>' +
-            '<textarea placeholder="Summary" class="text-summary" title="Summary"></textarea>' +
-            '<textarea placeholder="Content" class="text-content" title="Content"></textarea>' +
-            '<button class="send-news" onclick="newsService.completeChanging(' + id + '); newsService.closeChanging();"><i class="fa fa-paper-plane"></i>Send</button>';
-        document.getElementsByClassName('news-feed')[0].appendChild(template);
+    function loginWindow() {
+        var blackBackground = document.createElement('div');
+        blackBackground.className = 'half-black';
+        var news = document.querySelector('#login-window').content.querySelector('.login-window').cloneNode(true);
+        news.id = 'login-window';
+        news.addEventListener('click', handleClickToClose);
+        news.addEventListener('click', handleClickOnLogining);
+        document.getElementsByClassName('overlay')[0].appendChild(news);
+        document.getElementsByClassName('overlay')[0].appendChild(blackBackground);
+        setTimeout(function () {
+            news.style.opacity = '1';
+        }, 0);
     }
 
-    function closeChanging() {
-        var temp = document.getElementById('changing');
-        document.getElementsByClassName('news-feed')[0].removeChild(temp);
+    function getUser(element) {
+        var nickName = element.getElementsByClassName('login')[0].value;
+        var password = element.getElementsByClassName('password')[0].value;
+        if (nickName) {
+            user = nickName;
+            checkingUser();
+        }
+        else {
+            alert('Invalid user');
+        }
     }
 
-    function completeChanging(id) {
-        var temp = document.getElementById('changing');
-        var title = temp.getElementsByClassName('text-title')[0].value;
-        var summary = temp.getElementsByClassName('text-summary')[0].value;
-        var content = temp.getElementsByClassName('text-content')[0].value;
+    function createWindowNews() {
+        var blackBackground = document.createElement('div');
+        blackBackground.className = 'half-black';
+        var news = document.querySelector('#creating-news').content.querySelector('.create-news').cloneNode(true);
+        news.id = 'creating';
+        news.addEventListener('click', handleClickToClose);
+        news.addEventListener('click', handleClickOnCreating);
+        document.getElementsByClassName('overlay')[0].appendChild(news);
+        document.getElementsByClassName('overlay')[0].appendChild(blackBackground);
+        setTimeout(function () {
+            news.style.opacity = '1';
+        }, 0);
+    }
+
+    function createNews(element) {
+        var title = element.getElementsByClassName('create-news-title')[0].value;
+        var summary = element.getElementsByClassName('create-news-summary')[0].value;
+        var content = element.getElementsByClassName('create-news-content')[0].value;
+        var date = new Date();
+        var article = {
+            Id: date.toString(),
+            Title: title,
+            Summary: summary,
+            CreatedAt: date,
+            Author: user,
+            Content: content
+        };
+        var temp = document.getElementsByClassName('news-feed')[0];
+        if (articlesService.validateArticle(article)) {
+            articlesService.addArticle(article);
+            addNewsInNewsFeed(article.Id, temp);
+            closeWindow(element);
+            fillingSelect();
+        }
+        else {
+            alert("Invalid news");
+        }
+    }
+
+    function openNews(id) {
+        var blackBackground = document.createElement('div');
+        blackBackground.className = 'half-black';
+        var news = document.querySelector('#show-news').content.querySelector('.show-news').cloneNode(true);
+        var article = articlesService.getArticle(id);
+        news.id = 'show-news';
+        news.getElementsByTagName('h1')[0].innerHTML = article.Title;
+        news.getElementsByTagName('h2')[0].innerHTML = article.Summary;
+        news.getElementsByTagName('p')[0].innerHTML = article.Content;
+        news.getElementsByTagName('footer')[0].innerHTML = article.CreatedAt.getDate() + '.' + article.CreatedAt.getMonth() + '.' +
+            article.CreatedAt.getFullYear() + ' by ' + article.Author;
+        news.addEventListener('click', handleClickToClose);
+        document.getElementsByClassName('overlay')[0].appendChild(news);
+        document.getElementsByClassName('overlay')[0].appendChild(blackBackground);
+        setTimeout(function () {
+            news.style.opacity = '1';
+        }, 0);
+    }
+
+    function editNews(id) {
+        var article = articlesService.getArticle(id);
+        var news = document.querySelector('#edit-news').content.querySelector('.edit-news').cloneNode(true);
+        var blackBackground = document.createElement('div');
+        blackBackground.className = 'half-black';
+        news.id = 'editing';
+        news.getElementsByClassName('text-title')[0].value = article.Title;
+        news.getElementsByClassName('text-summary')[0].value = article.Summary;
+        news.getElementsByClassName('text-content')[0].innerHTML = article.Content;
+        news.getElementsByClassName('send-news')[0].id = 'send-news';
+        news.getElementsByClassName('send-news')[0].className += ' '+id;
+        news.addEventListener('click', handleClickToClose);
+        news.addEventListener('click', handleClickOnEditing);
+        document.getElementsByClassName('overlay')[0].appendChild(news);
+        document.getElementsByClassName('overlay')[0].appendChild(blackBackground);
+        setTimeout(function () {
+            news.style.opacity = '1';
+        }, 0);
+    }
+
+    function completeEditing(id, element) {
+        var title = element.getElementsByClassName('text-title')[0].value;
+        var summary = element.getElementsByClassName('text-summary')[0].value;
+        var content = element.getElementsByClassName('text-content')[0].value;
         var article = {
             Title: title,
             Summary: summary,
             Content: content
         };
-        articlesService.editArticle(id, article);
-        var news = addNews(id);
-        var oldChild = document.getElementById(id);
-        document.getElementsByClassName('news-feed')[0].replaceChild(news, oldChild);
-        console.log(id);
+        if (articlesService.editArticle(id[1], article)) {
+            var news = createNewsForNewsFeed(id[1]);
+            var oldChild = document.getElementById(id[1]);
+            document.getElementsByClassName('news-feed')[0].replaceChild(news, oldChild);
+            closeWindow(element);
+        } else {
+            alert("Invalid news");
+        }
     }
 
+    function show() {
+        document.getElementsByClassName('news-feed')[0].innerHTML = '';
+        var temp = document.getElementsByClassName('news-feed')[0];
+        var articles = articlesService.getArticles(0, 4);
+        articles.forEach(function (item) {
+            addNewsInNewsFeed(item.Id, temp);
+        });
+        amountOfNews = 4;
+        document.getElementsByClassName('load-more')[0].style.display = '';
+    }
+
+    function deleteNewsFromNewsFeed(id) {
+        var temp = document.getElementById(id);
+        articlesService.removeArticle(id);
+        temp.parentNode.removeChild(temp);
+        console.log(articlesService.deletedArticles);
+    }
+
+    function loadMoreNews() {
+        if (articlesService.length - amountOfNews > 0) {
+            var temp = document.getElementsByClassName('news-feed')[0];
+            var articles = articlesService.getArticles(amountOfNews, amountOfNews + 4);
+            articles.forEach(function (item) {
+                addNewsInNewsFeed(item.Id, temp);
+            });
+            amountOfNews += 4;
+            if (articlesService.length - amountOfNews < 0) {
+                document.getElementsByClassName('load-more')[0].style.display = 'none';
+            }
+        }
+    }
+
+    function closeWindow(element) {
+        element.style.opacity = '0';
+        setTimeout(function () {
+            document.getElementsByClassName('overlay')[0].removeChild(element);
+            var temp = document.getElementsByClassName('half-black')[0];
+            document.getElementsByClassName('overlay')[0].removeChild(temp);
+        }, 500);
+    }
+
+    function fillingSelect() {
+        var authors = articlesService.uniqueAuthors();
+        var select = document.getElementsByClassName('authors')[0];
+        select.innerHTML = '';
+        Object.keys(authors).forEach(function (item) {
+            select.innerHTML += '<option>' + item + '</option>';
+        });
+        select.innerHTML += '<option> </option>'
+    }
+
+    fillingSelect();
+
+    document.getElementsByClassName('sort-delete')[0].addEventListener('click', handleClickOnDeleteSort);
+
+    document.getElementsByClassName('navigation-bar')[0].addEventListener('click', handleClickOnNavigationBar);
+
+    document.getElementsByClassName('sort-triggering')[0].addEventListener('click', handleClickOnSort);
+
+    document.getElementsByClassName('all-buttons')[0].addEventListener('click', handleClickOnControlButtons);
+
+    document.getElementsByClassName('load-more')[0].addEventListener('click', handleClickOnControlButtons);
+
+    document.getElementsByClassName('sort-button')[0].addEventListener('click', handleClickOnSortButton);
+
+    function checkingUser() {
+        if (user) {
+            document.getElementsByClassName('sign-in')[0].style.display = 'none';
+            document.getElementsByClassName('sign-up')[0].style.display = 'none';
+            document.getElementsByClassName('nickname')[0].textContent = user;
+            document.getElementsByClassName('nickname')[0].style.display = '';
+            document.getElementsByClassName('log-out')[0].style.display = '';
+            document.getElementsByClassName('link-white')[0].style.display = '';
+            show();
+        } else {
+            document.getElementsByClassName('link-white')[0].style.display = 'none';
+            document.getElementsByClassName('log-out')[0].style.display = 'none';
+            document.getElementsByClassName('nickname')[0].style.display = 'none';
+            document.getElementsByClassName('nickname')[0].textContent = '';
+            document.getElementsByClassName('sign-in')[0].style.display = '';
+            document.getElementsByClassName('sign-up')[0].style.display = '';
+            show();
+        }
+    }
+
+    checkingUser();
+
     return {
-        addNews: addNews,
-        deleteNews: deleteNews,
+        addNews: addNewsInNewsFeed,
+        deleteNews: deleteNewsFromNewsFeed,
         show: show,
-        changeNews: changeNews,
-        closeChanging: closeChanging,
-        completeChanging: completeChanging
+        changeNews: editNews,
+        closeWindow: closeWindow,
+        completeChanging: completeEditing
     }
-}());
-window.onload= function () {
-    if(user!=null){
-        var inButton = document.getElementsByClassName('in-button')[0].setAttribute('hidden','hidden');
-        var outButton = document.getElementsByClassName('out-button')[0].setAttribute('hidden','hidden');
-        document.getElementsByClassName('nickname')[0].textContent=user;
-    } else{
-        var logButton = document.getElementsByClassName('log-button')[0].setAttribute('hidden','hidden');
-    }
+})());
+window.onload = function () {
+    newsService.show();
 };
-newsService.addNews(5);
