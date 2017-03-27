@@ -1,10 +1,10 @@
 {
   "name": "news",
   "version": "1.0.0",
-  "description": "",
+  "description": "server",
   "main": "index.js",
-  "dependencies": {
-    "express": "^4.15.2"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -12,5 +12,11 @@
   },
   "author": "Maksim Stefanenko",
   "license": "ISC",
-  "homepage": "https://github.com/Resspectine/UP_2nd"
+  "bugs": {
+    "url": "https://github.com/Resspectine/UP_2nd/issues"
+  },
+  "homepage": "https://github.com/Resspectine/UP_2nd#readme",
+  "dependencies": {
+    "express": "^4.15.2"
+  }
 }
