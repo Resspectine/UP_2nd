@@ -239,6 +239,8 @@ var articlesService = (function () {
         Articles.forEach(function (item) {
             item.CreatedAt = new Date(item.CreatedAt);
         });
+    } else{
+        Articles=articles;
     }
     if (deletedArticles) {
         deletedArticles.forEach(function (item) {
