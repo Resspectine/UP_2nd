@@ -82,24 +82,28 @@ body{
 }
 
 .flex-tools {
+    width:80vw;
     display: flex;
+    flex-direction:row;
     align-items: center;
     justify-content: space-between;
     background-color: rgb(255, 105, 180);
 }
 
-.navigation-bar {
-    margin-left: 25px;
-    margin-bottom: 0;
-
-    height: 24px;
-    user-select: none;
+.sort-search{
     display: flex;
     justify-content: space-between;
+    width: 80vw;
+    flex-direction: row;
+}
+
+.navigation-bar {
+    display: flex;
+    height: 24px;
+    user-select: none;
 }
 
 .my-flex-block {
-    width: 6vw;
     height: 25px;
 }
 
@@ -128,7 +132,7 @@ body{
 }
 
 .search {
-    margin-right: 20px;
+    margin-right: 10px;
     display: flex;
     height: 25px;
 }
@@ -156,9 +160,8 @@ body{
 }
 .sort {
     display: flex;
-    justify-content: space-between;
-    width: 110px;
     height: 20px;
+    margin: 0 0 0 10px;
 }
 .news-feed {
     margin: 160px 10vw 0 10vw;
@@ -194,8 +197,6 @@ body{
 .flex-interface {
     float: right;
     display: flex;
-    width: 4vw;
-    justify-content: space-between;
 }
 
 .show-news {
@@ -231,10 +232,6 @@ body{
 .edit {
     position: relative;
     font-size: 80px;
-}
-
-.navigation {
-    margin-left: 30%;
 }
 
 .edit-news {
@@ -447,4 +444,8 @@ footer {
     display: none;
     background-color: rgb(255, 105, 180);
     border: 1px;
+}
+
+.flex-interface img{
+    height: 30px;
 }
