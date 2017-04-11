@@ -4,7 +4,7 @@ var app = express();
 var db = require('diskdb');
 app.use(express.static('public'));
 app.use(bodyParser.json());
-db.connect('private', ['articles', 'deletedArticles']);
+db.connect('private', ['articles']);
 
 app.get('/news', function (req, res) {
     res.json(db.articles.find());

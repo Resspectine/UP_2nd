@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>News</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <link rel="stylesheet" type="text/css" href="hovers.css">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="../css/styles.css">
+    <link rel="stylesheet" type="text/css" href="../css/hovers.css">
+    <link rel="shortcut icon" href="../icons/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -25,9 +25,11 @@
     </div>
     <div class="flex-tools">
         <div class="sort">
-            Сортировка
-            <button class="sort-triggering"><i class="fa fa-arrow-down"></i>
-            </button>
+            <label>
+                Сортировка
+                <button class="sort-triggering"><i class="fa fa-arrow-down"></i>
+                </button>
+            </label>
             <button class="sort-delete">&#10006;
             </button>
         </div>
@@ -71,9 +73,9 @@
         <p class="short-text"></p>
         <div class="flex-interface">
             <a href="#" id="edit">
-                <img src="pencil.png"> </a>
+                <img src="../icons/pencil.png"> </a>
             <a href="#" id="delete">
-                <img src="trash.png"></a>
+                <img src="../icons/trash.png"></a>
         </div>
         <footer></footer>
     </div>
@@ -88,11 +90,13 @@
 <template id="login-window">
     <div class="login-window">
         <button class="close-window">&#10006;</button>
-        <div class="flex-login-inputs">
-            <input type="text" placeholder="Login" class="login" title="Title">
-            <input type="text" placeholder="Password" class="password" title="Summary">
-        </div>
-        <button class="login-button">Log in</button>
+        <form name="login">
+            <div class="flex-login-inputs">
+                <input type="text" placeholder="Login" class="login" name="login">
+                <input type="text" placeholder="Password" class="password" title="Summary">
+            </div>
+            <button class="login-button">Log in</button>
+        </form>
     </div>
 </template>
 <template id="creating-news">
@@ -133,5 +137,6 @@
         </button>
     </div>
 </template>
-<script src="script.js"></script>
+<script src="../scripts/serverCommands.js"></script>
+<script src="../scripts/script.js"></script>
 </html>

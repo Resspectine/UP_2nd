@@ -175,6 +175,7 @@ body{
 
 
 .short-news {
+    cursor: pointer;
     background: #fff;
     transition: height 2s ease-out;
     border: 1px solid #a9a9a9;
