@@ -1,5 +1,5 @@
 var serverCommands = (function () {
-    function globalGet() {
+    function getArticles() {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", '/news', false);
         xhr.send();
@@ -7,6 +7,18 @@ var serverCommands = (function () {
         articles.forEach(function (article) {
             article.CreatedAt = new Date(article.CreatedAt);
         });
+        return articles;
+    }
+
+    function getDeletedArticles() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", '/deletedNews', false);
+        xhr.send();
+        var articles = JSON.parse(xhr.responseText);
+        articles.forEach(function (article) {
+            article.CreatedAt = new Date(article.CreatedAt);
+        });
+        return articles;
     }
 
     function globalPost(articles) {
@@ -26,6 +38,7 @@ var serverCommands = (function () {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", '/news/'+id);
         xhr.send();
+        console.log(xhr.responseText);
         return JSON.parse(xhr.responseText);
     }
     function deleteArticle(id) {
@@ -40,7 +53,8 @@ var serverCommands = (function () {
         xhr.send(JSON.stringify(article));
     }
     return{
-        globalGet:globalGet,
+        getArticles:getArticles,
+        getDeletedArticles:getDeletedArticles,
         globalPost:globalPost,
         updateArticle:updateArticle,
         getFullArticle:getFullArticle,

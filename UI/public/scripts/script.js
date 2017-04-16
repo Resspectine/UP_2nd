@@ -1,24 +1,8 @@
 var user = "";
 var articlesService = (function () {
-    var Articles = JSON.parse(localStorage.getItem('data'));
-    if (Articles) {
-        Articles.forEach(function (item) {
-            item.CreatedAt = new Date(item.CreatedAt);
-        });
-    }
-    var deletedArticles = JSON.parse(localStorage.getItem('delete'));
-    if (deletedArticles) {
-        deletedArticles.forEach(function (item) {
-            item.CreatedAt = new Date(item.CreatedAt);
-        });
-    } else {
-        deletedArticles = [];
-    }
-    window.addEventListener('beforeunload', function () {
-        localStorage.setItem('data', JSON.stringify(Articles));
-        localStorage.setItem('delete', JSON.stringify(deletedArticles));
-    });
-
+    var Articles = serverCommands.getArticles();
+    var deletedArticles = serverCommands.getDeletedArticles();
+    var length;
     function setLength() {
         if (Articles) {
             length = Articles.length;
@@ -69,7 +53,7 @@ var articlesService = (function () {
                     return fileConfig.Author === number.Author;
                 });
             }
-            if (fileConfig.CreatedAtFinish && fileConfig.Author) {
+            if (fileConfig.CreatedAtFinish) {
                 sortedArticles = sortedArticles.filter(function (number) {
                     return new Date(fileConfig.CreatedAtFinish) >= number.CreatedAt
                 });
@@ -87,13 +71,8 @@ var articlesService = (function () {
     }
 
     function getArticle(id) {
-        var result = false;
-        Articles.forEach(function (item) {
-            if (id === item.Id) {
-                result = item;
-            }
-        });
-        return result || false;
+        console.log(id);
+        serverCommands.getFullArticle(id);
     }
 
     function validateArticle(article) {
@@ -107,17 +86,17 @@ var articlesService = (function () {
 
     function addArticle(article) {
         if (validateArticle(article)) {
-            Articles.push(article);
+            serverCommands.sendArticle(article);
+            Articles = serverCommands.getArticles();
             setLength();
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
 
     function editArticle(id, article) {
-        var mainArticle = getArticle(id);
+        var mainArticle = serverCommands.getFullArticle(id);
         console.log(mainArticle);
         var bufferArticle = {
             Id: mainArticle.Id,
@@ -128,9 +107,8 @@ var articlesService = (function () {
             Content: article.Content
         };
         if (validateArticle(bufferArticle)) {
-            getArticle(id).Title = article.Title;
-            getArticle(id).Summary = article.Summary;
-            getArticle(id).Content = article.Content;
+            serverCommands.updateArticle(bufferArticle);
+            Articles= serverCommands.getArticles();
             return true;
         }
         else {
@@ -140,8 +118,7 @@ var articlesService = (function () {
     }
 
     function removeArticle(id) {
-        deletedArticles.push(getArticle(id));
-        Articles.splice(Articles.indexOf(getArticle(id)), Articles.indexOf(getArticle(id)));
+        serverCommands.deleteArticle(id);
         setLength();
     }
 
@@ -510,8 +487,8 @@ var newsService = ((function () {
         } else {
             signIn.style.display = '';
             signUp.style.display = '';
-            nickname.style.display = 'none';
             nickname.textContent = '';
+            nickname.style.display = 'none';
             logOut.style.display = 'none';
             linkWhite.style.display = 'none';
             show();

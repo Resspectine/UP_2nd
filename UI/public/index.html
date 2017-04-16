@@ -5,7 +5,7 @@
     <title>News</title>
     <link rel="stylesheet" type="text/css" href="../css/styles.css">
     <link rel="stylesheet" type="text/css" href="../css/hovers.css">
-    <link rel="shortcut icon" href="../icons/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="../public/icons/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
@@ -73,9 +73,9 @@
         <p class="short-text"></p>
         <div class="flex-interface">
             <a href="#" id="edit">
-                <img src="../icons/pencil.png"> </a>
+                <img src="../public/icons/pencil.png"> </a>
             <a href="#" id="delete">
-                <img src="../icons/trash.png"></a>
+                <img src="../public/icons/trash.png"></a>
         </div>
         <footer></footer>
     </div>
@@ -90,13 +90,11 @@
 <template id="login-window">
     <div class="login-window">
         <button class="close-window">&#10006;</button>
-        <form name="login">
             <div class="flex-login-inputs">
                 <input type="text" placeholder="Login" class="login" name="login">
-                <input type="text" placeholder="Password" class="password" title="Summary">
+                <input type="text" placeholder="Password" class="password" name="password">
             </div>
-            <button class="login-button">Log in</button>
-        </form>
+        <button class="login-button">Log in</button>
     </div>
 </template>
 <template id="creating-news">

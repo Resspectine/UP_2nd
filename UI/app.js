@@ -4,11 +4,16 @@ var app = express();
 var db = require('diskdb');
 app.use(express.static('public'));
 app.use(bodyParser.json());
-db.connect('private', ['articles']);
+db.connect('private', ['articles', 'deletedArticles']);
 
 app.get('/news', function (req, res) {
     res.json(db.articles.find());
     console.log("News send");
+});
+
+app.get('/deletedNews', function(req,res){
+    res.json(db.deletedArticles.find());
+    console.log("Deleted send");
 });
 
 app.post('/news', function (req, res) {
@@ -20,8 +25,8 @@ app.post('/news', function (req, res) {
 });
 
 app.path('/news/', function (req, res) {
-    var index = req.body.id;
-    var query = db.articles.findOne({id: index.toString()});
+    var index = req.body.Id;
+    var query = db.articles.findOne({Id: index.toString()});
     console.log(query);
     console.log(req.body);
     var options = {
@@ -32,14 +37,15 @@ app.path('/news/', function (req, res) {
     res.json(req.body);
 });
 app.get('/news/:id', function (req, res) {
-    var article = db.articlse.findOne({id: req.params.id});
+    var article = db.articles.findOne({Id: req.params.id});
+    console.log(article);
     res.json(article);
 });
 app.delete('/news/:id', function (req, res) {
     var id = req.params.id;
-    var article = db.articles.findOne({id: req.params.id});
+    var article = db.articles.findOne({Id: req.params.id});
     db.deletedArticles.save(article);
-    db.articles.remove({id: id});
+    db.articles.remove({Id: id});
     res.json({idWasRemoved: Number(id)});
 });
 app.put('/news/', function (req, res) {
