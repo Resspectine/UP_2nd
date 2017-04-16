@@ -5,7 +5,7 @@ var serverCommands = (function () {
         xhr.send();
         var articles = JSON.parse(xhr.responseText);
         articles.forEach(function (article) {
-            article.createdAt = new Date(article.createdAt);
+            article.CreatedAt = new Date(article.CreatedAt);
         });
     }
 
@@ -46,5 +46,5 @@ var serverCommands = (function () {
         getFullArticle:getFullArticle,
         deleteArticle:deleteArticle,
         sendArticle:sendArticle
-    }
+    };
 }());
