@@ -36,7 +36,7 @@ var serverCommands = (function () {
     }
     function getFullArticle(id) {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", '/news/'+id);
+        xhr.open("GET", '/news/'+id,false);
         xhr.send();
         console.log(xhr.responseText);
         return JSON.parse(xhr.responseText);

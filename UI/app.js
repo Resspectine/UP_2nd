@@ -8,6 +8,7 @@ db.connect('private', ['articles', 'deletedArticles']);
 
 app.get('/news', function (req, res) {
     res.json(db.articles.find());
+    console.log(db.articles.find());
     console.log("News send");
 });
 

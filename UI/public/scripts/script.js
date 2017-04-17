@@ -149,7 +149,8 @@ var newsService = ((function () {
     var amountOfNews = 0;
 
     function createNewsForNewsFeed(id) {
-        var article = articlesService.getArticle(id);
+        console.log(id);
+        var article = serverCommands.getFullArticle(id);
         var news;
         if (user) {
             news = document.querySelector('#logined-user-news').content.querySelector('.short-news').cloneNode(true);
