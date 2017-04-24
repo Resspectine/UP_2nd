@@ -1,15 +1,8 @@
 var user = "";
 var articlesService = (function () {
-    var Articles = serverCommands.getArticles();
-    var deletedArticles = serverCommands.getDeletedArticles();
     var length;
     function setLength() {
-        if (Articles) {
-            length = Articles.length;
-        }
-        else {
-            length = articles.length;
-        }
+            length = serverCommands.getArticles().length;
     }
 
     var validatedArticle =
@@ -46,7 +39,7 @@ var articlesService = (function () {
     function getArticles(skip, top, fileConfig) {
         skip = skip || 0;
         top = top || 10;
-        var sortedArticles = Articles.slice(skip, top);
+        var sortedArticles = serverCommands.getArticles().slice(skip, top);
         if (fileConfig) {
             if (fileConfig.Author) {
                 sortedArticles = sortedArticles.filter(function (number) {
@@ -70,11 +63,6 @@ var articlesService = (function () {
         return sortedArticles;
     }
 
-    function getArticle(id) {
-        console.log(id);
-        serverCommands.getFullArticle(id);
-    }
-
     function validateArticle(article) {
         if (article) {
             return Object.keys(validatedArticle).every(function (item) {
@@ -87,7 +75,6 @@ var articlesService = (function () {
     function addArticle(article) {
         if (validateArticle(article)) {
             serverCommands.sendArticle(article);
-            Articles = serverCommands.getArticles();
             setLength();
             return true;
         } else {
@@ -97,7 +84,6 @@ var articlesService = (function () {
 
     function editArticle(id, article) {
         var mainArticle = serverCommands.getFullArticle(id);
-        console.log(mainArticle);
         var bufferArticle = {
             Id: mainArticle.Id,
             Title: article.Title,
@@ -108,7 +94,6 @@ var articlesService = (function () {
         };
         if (validateArticle(bufferArticle)) {
             serverCommands.updateArticle(bufferArticle);
-            Articles= serverCommands.getArticles();
             return true;
         }
         else {
@@ -124,7 +109,7 @@ var articlesService = (function () {
 
     function uniqueAuthors() {
         var authors = {};
-        Articles.forEach(function (item) {
+        serverCommands.getArticles().forEach(function (item) {
             var str = item.Author;
             authors[str] = true;
         });
@@ -135,13 +120,11 @@ var articlesService = (function () {
 
     return {
         getArticles: getArticles,
-        getArticle: getArticle,
         validateArticle: validateArticle,
         addArticle: addArticle,
         editArticle: editArticle,
         removeArticle: removeArticle,
         length: length,
-        deletedArticles: deletedArticles,
         uniqueAuthors: uniqueAuthors
     }
 }());
@@ -149,7 +132,6 @@ var newsService = ((function () {
     var amountOfNews = 0;
 
     function createNewsForNewsFeed(id) {
-        console.log(id);
         var article = serverCommands.getFullArticle(id);
         var news;
         if (user) {
@@ -354,7 +336,7 @@ var newsService = ((function () {
         var blackBackground = document.createElement('div');
         blackBackground.className = 'half-black';
         var news = document.querySelector('#show-news').content.querySelector('.show-news').cloneNode(true);
-        var article = articlesService.getArticle(id);
+        var article = serverCommands.getFullArticle(id);
         news.id = 'show-news';
         news.getElementsByTagName('h1')[0].innerHTML = article.Title;
         news.getElementsByTagName('h2')[0].innerHTML = article.Summary;
@@ -370,7 +352,7 @@ var newsService = ((function () {
     }
 
     function editNews(id) {
-        var article = articlesService.getArticle(id);
+        var article = serverCommands.getFullArticle(id);
         var news = document.querySelector('#edit-news').content.querySelector('.edit-news').cloneNode(true);
         var blackBackground = document.createElement('div');
         blackBackground.className = 'half-black';
@@ -423,7 +405,6 @@ var newsService = ((function () {
         var temp = document.getElementById(id);
         articlesService.removeArticle(id);
         temp.parentNode.removeChild(temp);
-        console.log(articlesService.deletedArticles);
         fillingSelect();
     }
 
@@ -453,10 +434,10 @@ var newsService = ((function () {
         var authors = articlesService.uniqueAuthors();
         var select = document.getElementsByClassName('authors')[0];
         select.innerHTML = '';
+        select.innerHTML += '<option> </option>'
         Object.keys(authors).forEach(function (item) {
             select.innerHTML += '<option>' + item + '</option>';
         });
-        select.innerHTML += '<option> </option>'
     }
 
     document.getElementsByClassName('sort-delete')[0].addEventListener('click', handleClickOnDeleteSort);

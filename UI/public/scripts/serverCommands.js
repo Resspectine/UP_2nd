@@ -30,35 +30,40 @@ var serverCommands = (function () {
 
     function updateArticle(article) {
         var xhr = new XMLHttpRequest();
-        xhr.open("PATH", '/news');
+        xhr.open("PUT", '/newsEdit', false);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(article));
     }
+
     function getFullArticle(id) {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", '/news/'+id,false);
+        xhr.open("GET", '/news/' + id, false);
         xhr.send();
-        console.log(xhr.responseText);
-        return JSON.parse(xhr.responseText);
+        var article = JSON.parse(xhr.responseText);
+        article.CreatedAt = new Date(article.CreatedAt);
+        return article;
     }
+
     function deleteArticle(id) {
         var xhr = new XMLHttpRequest();
-        xhr.open('DELETE','/news/'+id);
+        xhr.open('GET', '/news/delete/' + id);
         xhr.send();
     }
+
     function sendArticle(article) {
         var xhr = new XMLHttpRequest();
         xhr.open("PUT", '/news');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(JSON.stringify(article));
     }
-    return{
-        getArticles:getArticles,
-        getDeletedArticles:getDeletedArticles,
-        globalPost:globalPost,
-        updateArticle:updateArticle,
-        getFullArticle:getFullArticle,
-        deleteArticle:deleteArticle,
-        sendArticle:sendArticle
+
+    return {
+        getArticles: getArticles,
+        getDeletedArticles: getDeletedArticles,
+        globalPost: globalPost,
+        updateArticle: updateArticle,
+        getFullArticle: getFullArticle,
+        deleteArticle: deleteArticle,
+        sendArticle: sendArticle
     };
 }());
