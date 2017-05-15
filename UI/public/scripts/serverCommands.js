@@ -1,24 +1,46 @@
 var serverCommands = (function () {
     function getArticles() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", '/news', false);
-        xhr.send();
-        var articles = JSON.parse(xhr.responseText);
-        articles.forEach(function (article) {
-            article.CreatedAt = new Date(article.CreatedAt);
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", '/news');
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    let articles = JSON.parse(xhr.responseText);
+                    articles.forEach(function (article) {
+                        article.CreatedAt = new Date(article.CreatedAt);
+                    });
+                    resolve(articles);
+                } else {
+                    reject({
+                        status: this.status,
+                        statusText: this.statusText
+                    });
+                }
+            };
+            xhr.send();
         });
-        return articles;
     }
 
     function getDeletedArticles() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", '/deletedNews', false);
-        xhr.send();
-        var articles = JSON.parse(xhr.responseText);
-        articles.forEach(function (article) {
-            article.CreatedAt = new Date(article.CreatedAt);
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", '/deletedNews');
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    let articles = JSON.parse(xhr.responseText);
+                    articles.forEach(function (article) {
+                        article.CreatedAt = new Date(article.CreatedAt);
+                    });
+                    resolve(articles);
+                } else {
+                    reject({
+                        status: this.status,
+                        statusText: this.statusText
+                    });
+                }
+            };
+            xhr.send();
         });
-        return articles;
     }
 
     function globalPost(articles) {
@@ -29,19 +51,32 @@ var serverCommands = (function () {
     }
 
     function updateArticle(article) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("PUT", '/newsEdit', false);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(article));
+        return new Promise(() => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("PUT", '/newsEdit');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify(article));
+        });
     }
 
     function getFullArticle(id) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", '/news/' + id, false);
-        xhr.send();
-        var article = JSON.parse(xhr.responseText);
-        article.CreatedAt = new Date(article.CreatedAt);
-        return article;
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/news/' + id);
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    let article = JSON.parse(xhr.responseText);
+                    article.CreatedAt = new Date(article.CreatedAt);
+                    resolve(article);
+                } else {
+                    reject({
+                        status: this.status,
+                        statusText: xhr.statusText
+                    });
+                }
+            };
+            xhr.send();
+        });
     }
 
     function deleteArticle(id) {
