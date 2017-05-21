@@ -71,7 +71,26 @@ var serverCommands = (function () {
                 } else {
                     reject({
                         status: this.status,
-                        statusText: xhr.statusText
+                        statusText: this.statusText
+                    });
+                }
+            };
+            xhr.send();
+        });
+    }
+
+    function getUsers() {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/users');
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    let users = JSON.parse(xhr.responseText);
+                    resolve(users);
+                } else {
+                    reject({
+                        status: this.status,
+                        statusText: this.statusText
                     });
                 }
             };
@@ -99,6 +118,8 @@ var serverCommands = (function () {
         updateArticle: updateArticle,
         getFullArticle: getFullArticle,
         deleteArticle: deleteArticle,
-        sendArticle: sendArticle
+        sendArticle: sendArticle,
+        getUsers: getUsers
     };
+
 }());

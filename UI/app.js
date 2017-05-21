@@ -4,7 +4,7 @@ var app = express();
 var db = require('diskdb');
 app.use(express.static('public'));
 app.use(bodyParser.json());
-db.connect('private', ['articles', 'deletedArticles']);
+db.connect('private', ['articles', 'deletedArticles','users']);
 
 app.get('/news', function (req, res) {
     res.json(db.articles.find());
@@ -12,6 +12,10 @@ app.get('/news', function (req, res) {
 
 app.get('/deletedNews', function(req,res){
     res.json(db.deletedArticles.find());
+});
+
+app.get('/users', function(req,res){
+    res.json(db.users.find());
 });
 
 app.post('/news', function (req, res) {

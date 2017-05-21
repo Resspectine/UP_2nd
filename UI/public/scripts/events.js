@@ -2,10 +2,10 @@ var events = (function () {
     function handleClickOnNews(event) {
         var parent = event.target.parentNode;
         if (parent.id === 'edit') {
-            newsService.editNews(event.currentTarget.id);
+            newsService.changeNews(event.currentTarget.id);
         } else {
             if (parent.id === 'delete') {
-                newsService.deleteNewsFromNewsFeed(event.currentTarget.id);
+                newsService.deleteNews(event.currentTarget.id);
             } else {
                 if (event.currentTarget.className === 'short-news') {
                     newsService.openNews(event.currentTarget.id);
@@ -27,7 +27,7 @@ var events = (function () {
     function handleClickOnEditing(event) {
         var button = event.target;
         if (button.id === 'send-news') {
-            newsService.completeEditing(event.target.classList, event.currentTarget);
+            newsService.completeChanging(event.target.classList, event.currentTarget);
         }
     }
 

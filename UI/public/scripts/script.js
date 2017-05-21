@@ -1,10 +1,4 @@
 var articlesService = (function () {
-    var length;
-
-    function setLength() {
-        length = serverCommands.getArticles().length;
-    }
-
     var validatedArticle = {
         Id: function (id) {
             if (id) {
@@ -76,7 +70,6 @@ var articlesService = (function () {
     function addArticle(article) {
         if (validateArticle(article)) {
             serverCommands.sendArticle(article);
-            setLength();
             return true;
         } else {
             return false;
@@ -84,8 +77,9 @@ var articlesService = (function () {
     }
 
     function editArticle(id, article) {
-        serverCommands.getFullArticle(id).then(
+        return serverCommands.getFullArticle(id).then(
             mainArticle => {
+                let answer;
                 var bufferArticle = {
                     Id: mainArticle.Id,
                     Title: article.Title,
@@ -96,18 +90,17 @@ var articlesService = (function () {
                 };
                 if (validateArticle(bufferArticle)) {
                     serverCommands.updateArticle(bufferArticle);
-                    return true;
-                }
-                else {
+                    return bufferArticle;
+                } else {
                     console.log("false");
-                    return false;
+                    answer = false;
+                    return answer;
                 }
             });
     }
 
     function removeArticle(id) {
         serverCommands.deleteArticle(id);
-        setLength();
     }
 
     function getUniqueAuthors() {
@@ -117,11 +110,10 @@ var articlesService = (function () {
                 var str = item.Author;
                 authors[str] = true;
             });
-            return  authors;
+
+            return authors;
         });
     }
-
-    setLength();
 
     return {
         getArticles: getArticles,
@@ -136,11 +128,8 @@ var newsService = ((function () {
     var amountOfNews = 0;
     var user = "";
 
-    function createNewsForNewsFeed(id, direction) {
-        serverCommands.getFullArticle(id).then(
-            article => {
-                addNewsInNewsFeed(creatingNews(article), direction);
-            });
+    function createNewsForNewsFeed(item, direction) {
+        addNewsInNewsFeed(creatingNews(item), direction);
     }
 
     function creatingNews(article) {
@@ -178,15 +167,29 @@ var newsService = ((function () {
     }
 
     function getUser(element) {
-        var nickName = element.getElementsByClassName('login')[0].value;
-        var password = element.getElementsByClassName('password')[0].value;
-        if (nickName) {
-            user = nickName;
-            checkingUser();
-        }
-        else {
-            alert('Invalid user');
-        }
+        serverCommands.getUsers().then(users => {
+            let flag = true;
+            var nickName = element.getElementsByClassName('login')[0].value;
+            var password = element.getElementsByClassName('password')[0].value;
+            users.forEach(function (us) {
+                    if (us["nickname"] === nickName) {
+                        if (us["password"] === password) {
+                            user = nickName;
+                            checkingUser();
+                            flag = false;
+                        } else {
+                            alert('Invalid password');
+                            flag = false;
+                        }
+                    }
+                }
+            );
+            if (flag) {
+                alert('Invalid user');
+            }
+        }).catch(() => {
+            console.log("False");
+        });
     }
 
     function createWindowNews() {
@@ -219,11 +222,10 @@ var newsService = ((function () {
         var temp = document.getElementsByClassName('news-feed')[0];
         if (articlesService.validateArticle(article)) {
             articlesService.addArticle(article);
-            createNewsForNewsFeed(article.Id, temp);
+            createNewsForNewsFeed(article, temp);
             closeWindow(element);
             fillingSelect();
-        }
-        else {
+        } else {
             alert("Invalid news");
         }
     }
@@ -280,22 +282,25 @@ var newsService = ((function () {
             Summary: summary,
             Content: content
         };
-        if (articlesService.editArticle(id[1], article)) {
-            var news = createNewsForNewsFeed(id[1]);
-            var oldChild = document.getElementById(id[1]);
-            document.getElementsByClassName('news-feed')[0].replaceChild(news, oldChild);
-            closeWindow(element);
-        } else {
-            alert("Invalid news");
-        }
+        articlesService.editArticle(id[1], article).then(articleNew => {
+            if (articleNew) {
+                var news = creatingNews(articleNew);
+                var oldChild = document.getElementById(id[1]);
+                document.getElementsByClassName('news-feed')[0].replaceChild(news, oldChild);
+                closeWindow(element);
+            } else {
+                alert("Invalid news");
+            }
+        });
     }
 
     function show() {
         articlesService.getArticles(0, 4).then(articles => {
             document.getElementsByClassName('news-feed')[0].innerHTML = '';
+            console.log("ky");
             var temp = document.getElementsByClassName('news-feed')[0];
             articles.forEach(function (item) {
-                createNewsForNewsFeed(item.Id, temp);
+                createNewsForNewsFeed(item, temp);
             });
             amountOfNews = 4;
             document.getElementsByClassName('load-more')[0].style.display = '';
@@ -311,16 +316,18 @@ var newsService = ((function () {
     }
 
     function loadMoreNews() {
-        if (articlesService.length - amountOfNews > 0) {
-            var temp = document.getElementsByClassName('news-feed')[0];
-            var articles = articlesService.getArticles(amountOfNews, amountOfNews + 4);
-            articles.forEach(function (item) {
-                createNewsForNewsFeed(item.Id, temp);
+        articlesService.getArticles(amountOfNews, amountOfNews + 4).then(
+            articles => {
+                if (articles) {
+                    var temp = document.getElementsByClassName('news-feed')[0];
+                    articles.forEach(function (item) {
+                        createNewsForNewsFeed(item, temp);
+                    });
+                    amountOfNews += 4;
+                } else {
+                    console.log("Nothing to load");
+                }
             });
-            amountOfNews += 4;
-        } else {
-            alert("Nothing to load");
-        }
     }
 
     function closeWindow(element) {
@@ -339,7 +346,8 @@ var newsService = ((function () {
             select.innerHTML += '<option></option>';
             Object.keys(authors).forEach(function (item) {
                 select.innerHTML += '<option>' + item + '</option>';
-            });});
+            });
+        });
 
     }
 
@@ -401,6 +409,6 @@ var newsService = ((function () {
     }
 })());
 window.onload = function () {
-    newsService.show();
+    newsService.checkingUser();
     newsService.fillingSelect();
 };
