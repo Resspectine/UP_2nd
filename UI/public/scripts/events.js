@@ -39,13 +39,8 @@ var events = (function () {
     }
 
     function handleClickOnNavigationBar(event) {
-        var key = event.target.id;
-        switch (key) {
-            case 'add-news':
-                if (user) {
-                    newsService.createWindowNews();
-                }
-                break;
+        if (event.target.id === 'add-news') {
+            newsService.createWindowNews();
         }
     }
 
